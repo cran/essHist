@@ -8,7 +8,6 @@ The mixture of normal distributions
 }
 \description{
 Density, distribution function and random generation for the mixture of normals with each component specified by \code{mean} and \code{sd}, and mixture weights by \code{prob}. \code{paramExample} gives detailed parameters for some examples specified by \code{type}.
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 dmixnorm(x, mean, sd, prob = rep(1/length(mean),length(mean)), type = NULL, ...)
@@ -54,7 +53,7 @@ The length of the result is determined by \code{n} for \code{rmixnorm}, and is t
 }
 \references{
 %% ~put references to the literature/web site here ~
-Li, H., Munk, A., Sieling, H., and Walther, G. (2016).The essential histogram. arXiv:1612.07216.
+Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.
 
 Marron, J. S., & Wand, M. P. (1992). Exact mean integrated squred error. The Annals of Statistics, 20(2), 712--736.
 }

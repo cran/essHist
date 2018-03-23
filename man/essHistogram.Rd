@@ -4,10 +4,11 @@
 The Essential Histogram
 }
 \description{
-Compute the essential histogram via dynamic programming.
+Compute the essential histogram via (pruned) dynamic programming.
 }
 \usage{
-essHistogram(x, alpha = 0.5, q = NA, plot = TRUE, xname = deparse(substitute(x)), ...)
+essHistogram(x, alpha = 0.5, q = NA, plot = TRUE, verbose = TRUE, 
+             xname = deparse(substitute(x)), ...)
 }
 \arguments{
   \item{x}{
@@ -20,24 +21,27 @@ significance level; if \code{q} is missing, \code{q} is chosen as the (1-\code{a
 threshold value.
 }
   \item{plot}{
-logical. If \code{TRUE} (default), a histogram is plotted, otherwise a list of breaks and counts is returned. In the latter case, a warning is used if (typically graphical) arguments are specified that only apply to the plot = \code{TRUE} case.
+logical. If \code{TRUE} (default), a histogram is plotted, otherwise a list of breaks and counts is returned. In the latter case, a warning is used if (typically graphical) arguments are specified that only apply to the \code{plot = TRUE} case.
+}
+  \item{verbose}{
+logical. If \code{TRUE} (default) it prints some details about the computation; otherwise nothing is printed.   
 }
   \item{xname}{
 a character string with the actual \code{x} argument name.
 }
   \item{...}{
-further arguments and \code{\link{graphical parameters}} passed to \code{\link{plot.histogram}} and thence to \code{\link{title}} and \code{\link{axis}} (if \code{plot} = \code{TRUE}).
+further arguments and \code{\link{graphical parameters}} passed to \code{\link{plot.histogram}} and thence to \code{\link{title}} and \code{\link{axis}} (if \code{plot = TRUE}).
 }
 }
  \value{
- An object of class "\code{histogram}", which is the same as \code{\link{hist}}. 
+ An object of class "\code{histogram}", which is of the same class as returned by function \code{\link{hist}}. 
 }
 
 \details{
 The essential histogram is defined as the histogram with least blocks within the multiscale constraint. The one with highest likelihood is picked if there are more than one solutions. The essential histogram involves only one parameter \code{q}, the threshold of the multiscale constraint. Such a parameter can be chosen by means of the significance level \code{alpha}, which leads to nature statistical significance statements for the multiscale constraint. See Li et al. (2016) for further details.
 }
 \references{
-Li, H., Munk, A., Sieling, H., and Walther, G. (2016).The essential histogram. arXiv:1612.07216.}
+Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.}
 % \author{
 %%  ~~who you are~~
 % }

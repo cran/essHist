@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // msQuantile
-NumericVector msQuantile(int n, int nsim);
-RcppExport SEXP _essHist_msQuantile(SEXP nSEXP, SEXP nsimSEXP) {
+NumericVector msQuantile(int n, int nsim, bool verbose);
+RcppExport SEXP _essHist_msQuantile(SEXP nSEXP, SEXP nsimSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type nsim(nsimSEXP);
-    rcpp_result_gen = Rcpp::wrap(msQuantile(n, nsim));
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(msQuantile(n, nsim, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -34,7 +35,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_essHist_msQuantile", (DL_FUNC) &_essHist_msQuantile, 2},
+    {"_essHist_msQuantile", (DL_FUNC) &_essHist_msQuantile, 3},
     {"_essHist_boundedHistogram", (DL_FUNC) &_essHist_boundedHistogram, 5},
     {NULL, NULL, 0}
 };

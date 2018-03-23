@@ -215,7 +215,7 @@ DataFrame StepHistogram::bounded(Bounds& B) const {
     
     curD = costBound(0, k, B.current(0, k));
 
-    if (R_FINITE(curD)) { // constant solution on []0, ..., k] exists
+    if (R_FINITE(curD)) { // constant solution on [0, ..., k] exists
       curJ = curD;
       if(curJ < J[k]) { // improvement
         J[k] = curJ;
@@ -346,29 +346,17 @@ DataFrame StepHistogram::bounded(Bounds& B) const {
 DataFrame boundedHistogram(NumericVector cumSum, IntegerVector start, IntegerVector rightIndex, NumericVector lower, NumericVector upper) {
 
   // initialise object
-
   StepHistogram data = StepHistogram(cumSum, lower, upper);
 
-
-
   // check lengths
-
   if(cumSum.size() <= 1) perror("there must be more than one block");
-
   if(start.size() != (int) cumSum.size()) perror("length of start must match cumSum's");
-
   if(lower.size() != upper.size()) perror("lower must have same length as upper");
-
   if(upper.size() != rightIndex.size()) perror("upper must have same length as rightIndex");
-
-
 
   Bounds B = Bounds(start, rightIndex, lower, upper);
 
-
-
   // run algorithm
-
   return data.bounded(B); // the optimal feasible solution using minimal number of jumps
 
 }

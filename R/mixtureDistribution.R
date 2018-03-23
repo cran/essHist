@@ -98,31 +98,31 @@ paramExample <- function(type) {
     mean = c(0, 3/2)
     sd   = c(1, 1/3)
     prob = c(3/4, 1/4)
-  } else if (type %in% c("mw9", "trimodal")) {  
+  } else if (type %in% c("mw9","trimodal")) {  
     mean = c(-6/5, 6/5, 0)
     sd   = c(3/5, 3/5, 1/4)
     prob = c(9/20, 9/20, 1/10)
-  } else if (type %in% c("mw10", "claw")) { 
+  } else if (type %in% c("mw10","claw")) { 
     mean = c(0, (0:4)/2-1)
     sd   = c(1, rep(1/10, 5))
     prob = c(1/2, rep(1/10, 5))
-  } else if (type %in% c("mw11", "double_claw")) {
+  } else if (type %in% c("mw11","double_claw")) {
     mean = c(-1, 1, (-3:3)/2)
     sd   = c(2/3, 2/3, rep(1/100, 7))
     prob = rep(c(49/100, 1/350), c(2, 7))
-  } else if (type %in% c("mw12", "asymmetric_claw")) { 
+  } else if (type %in% c("mw12","asymmetric_claw")) { 
     mean = c(0, (-2:2)+1/2)
     sd   = c(1, 2^(2:-2)/10)
     prob = c(1/2, 2^(3:-1)/31)
-  } else if (type %in% c("mw13", "asymmetric_double_claw")) {  
+  } else if (type %in% c("mw13","asymmetric_double_claw")) {  
     mean = c(2*(0:1)-1, -(1:3)/2, (1:3)/2)
     sd   = rep(c(2/3, 1/100, 7/100), c(2, 3, 3))
     prob = rep(c(46/100, 1/300, 7/300), c(2, 3, 3))
-  } else if (tolower(type) %in% c("mw14", "smooth_comb")) {
+  } else if (tolower(type) %in% c("mw14","smooth_comb")) {
     mean = (65-96*(1/2)^(0:5))/21
     sd   = 32/63/2^(0:5)
     prob = 2^(5:0)/63
-  } else if (tolower(type) %in% c("mw15", "discrete_comb")) {  
+  } else if (tolower(type) %in% c("mw15","discrete_comb")) {  
     mean = c((12*(0:2)-15), 2*(8:10))/7
     sd   = rep(c(2/7,1/21), c(3,3))
     prob = rep(c(2/7,1/21), c(3,3))

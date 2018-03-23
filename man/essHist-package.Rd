@@ -38,7 +38,7 @@ paramExample    Output detailed parameters for some famous examples
 Maintainer: \packageMaintainer{essHist}
 }
 \references{
-Li, H., Munk, A., Sieling, H., and Walther, G. (2016).The essential histogram. arXiv:1612.07216}
+Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216}
 \keyword{package}
 \keyword{distribution}
 \keyword{nonparametric}

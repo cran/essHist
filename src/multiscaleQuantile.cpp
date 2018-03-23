@@ -12,7 +12,7 @@ double penLR(double x, int len, double pen, int n) {
 }
 
 // [[Rcpp::export(".msQuantile")]]
-NumericVector msQuantile(int n, int nsim) {
+NumericVector msQuantile(int n, int nsim, bool verbose) {
   // output
   NumericVector stat(nsim);
 
@@ -25,10 +25,9 @@ NumericVector msQuantile(int n, int nsim) {
 
     stat = last_simulation[2];
   } else {
-    Rprintf("Quantile simulation (only for the first time) might take a while ... ");
+    if (verbose)
+        Rprintf("Quantile simulation (only for the first time) might take a while ... ");
     
-    // Rprintf("Start Monte-Carlo simulation ...\n");
-
     // compute Rivera & Walther (2013) system of intervals
     int   nintv = 0; // number of intervals
     int    lmin = 2;
@@ -43,8 +42,6 @@ NumericVector msQuantile(int n, int nsim) {
         nintv += floor((n-1)/double(dl)) - len + 1;
       }
     }
-
-    // Rprintf("nintv = %d\n", nintv);
 
     IntegerVector  St(nintv);
     IntegerVector  Ed(nintv);
@@ -67,8 +64,6 @@ NumericVector msQuantile(int n, int nsim) {
       }
     }
 
-    // Rprintf("cnt = %d\n", cnt);
-
     // Monte-Carlo simulation
     NumericVector U(n);
     double pLR;
@@ -87,7 +82,8 @@ NumericVector msQuantile(int n, int nsim) {
     PutRNGstate();
     // store simulated results
     last_simulation = List::create(n, nsim, stat);
-    Rprintf("... end!\n");
+    if (verbose)
+        Rprintf("... end!\n");
   }
 
   return stat;

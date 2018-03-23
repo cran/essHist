@@ -1,5 +1,5 @@
 # Get the quantile of the multiscale statistic via Monte Carlo simulations
-msQuantile <- function(n, alpha = c(0.1), nsim = 5e3)
+msQuantile <- function(n, alpha = c(0.1), nsim = 5e3, verbose = TRUE, is.sim = (n < 1e4), ...)
 {
   # ##### R implementation
   # if (exists('lastSimulation') && lastSimulation$n == n && lastSimulation$nsim == nsim) {
@@ -60,15 +60,20 @@ msQuantile <- function(n, alpha = c(0.1), nsim = 5e3)
   #   lastSimulation <<- list(n=n, nsim=nsim, stat=stat)
   # }
   
-  ##### fast C++ implementation
-  stat = .msQuantile(n, nsim)
-
-  quantile(na.omit(stat), 1-alpha)
+  if (is.sim) {
+    ##### fast C++ implementation
+    stat = .msQuantile(n, nsim, verbose)
+  } else {
+    path = system.file("extdata", package = "essHist")
+    stat = readRDS(file.path(path, "simn1e4.rds"))
+  }
+  
+  quantile(na.omit(stat), 1-alpha, ...)
 }
 
 
 # Get the local bounds for multiscale constraint
-.msBounds <- function (y, q)
+.msBounds <- function (y, q = unname(q))
 {
   y = sort(y)
   n = length(y)
@@ -86,8 +91,8 @@ msQuantile <- function(n, alpha = c(0.1), nsim = 5e3)
   }
   Left  = numeric(nintv) # vector of left bounds of intervals
   Right = numeric(nintv) # vector of right values of intervals
-  Lower = rep(NA, nintv) # upper bounds for average density on intervals
-  Upper = rep(NA, nintv) # lower bounds for average density on intervals
+  Lower = rep(NA, nintv) # lower bounds for average density on intervals
+  Upper = rep(NA, nintv) # upper bounds for average density on intervals
 
   cnt = 0
   for (i in 1:length(d_l)){
@@ -176,15 +181,26 @@ msQuantile <- function(n, alpha = c(0.1), nsim = 5e3)
 
 # Compute the essential histogram
 # essHistogram <- function(y, alpha = 0.1, q = NA, confband = FALSE)
-essHistogram <- function(x, alpha = 0.5, q = NA, plot = TRUE, xname = deparse(substitute(x)), ...)
+essHistogram <- function(x, alpha = 0.5, q = NA, plot = TRUE, verbose =TRUE, xname = deparse(substitute(x)), ...)
 {
-  y     = sort(x)
-  n     = length(y)
-  if (is.na(q)) q = msQuantile(n = n, alpha = alpha)
+  y = sort(x)
+  n = length(y)
+  # Tackle duplicated data samples: slightly shift the samples by 'eps'
+  dupId = duplicated(y)
+  if (any(dupId)) {
+    nDup = diff(c(which(!dupId), n+1))
+    nDup = nDup[nDup > 1] - 1
+    eps  = max(1e-12, 0.1*min(diff(y[!dupId]))/max(nDup))
+    y[dupId] = y[dupId] + eps*sequence(nDup)
+  }
+
+  if (is.na(q)) q = msQuantile(n = n, alpha = alpha, verbose = verbose)
   bnd = .msBounds(y, q = q)
   ##### fast C++ implementation
+  if (verbose) cat("Dynamic programming ...")
   eh = .boundedHistogram(cumsum(y), bnd$start, bnd$bounds$ri-1, bnd$bounds$lower, bnd$bounds$upper)
-
+  if (verbose) cat(" ... end!\n")
+  
   nSeg       = length(eh$value)
   breakPoint = c(3*y[1]-y[2], y[eh$rightIndex[-nSeg]]+y[eh$rightIndex[-nSeg]+1], 3*y[n]-y[n-1])/2
   ret = list("breaks"   = breakPoint,
@@ -192,9 +208,12 @@ essHistogram <- function(x, alpha = 0.5, q = NA, plot = TRUE, xname = deparse(su
              "density"  = eh$value,
              "mids"     = (breakPoint[1:nSeg]+breakPoint[2:(nSeg+1)])/2,
              "xname"    = xname,
-             "equidist" = (var(diff(breakPoint)) <= 1e-16))
+             "equidist" = FALSE) # (var(diff(breakPoint)) <= 1e-16)
   class(ret) = "histogram"
   if (plot) plot(ret, ...)
   ret
 }
 
+.preSimulation <- function() {
+  scan()
+}
