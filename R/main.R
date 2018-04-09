@@ -64,8 +64,10 @@ msQuantile <- function(n, alpha = c(0.1), nsim = 5e3, verbose = TRUE, is.sim = (
     ##### fast C++ implementation
     stat = .msQuantile(n, nsim, verbose)
   } else {
+    cat('Load precomputed quantiles ... ')
     path = system.file("extdata", package = "essHist")
     stat = readRDS(file.path(path, "simn1e4.rds"))
+    cat('... end!\n')
   }
   
   quantile(na.omit(stat), 1-alpha, ...)
@@ -183,21 +185,28 @@ msQuantile <- function(n, alpha = c(0.1), nsim = 5e3, verbose = TRUE, is.sim = (
 # essHistogram <- function(y, alpha = 0.1, q = NA, confband = FALSE)
 essHistogram <- function(x, alpha = 0.5, q = NA, plot = TRUE, verbose =TRUE, xname = deparse(substitute(x)), ...)
 {
-  y = sort(x)
+  # y = sort(x)
+  y = smData(x, ...)
   n = length(y)
-  # Tackle duplicated data samples: slightly shift the samples by 'eps'
-  dupId = duplicated(y)
-  if (any(dupId)) {
-    nDup = diff(c(which(!dupId), n+1))
-    nDup = nDup[nDup > 1] - 1
-    eps  = max(1e-12, 0.1*min(diff(y[!dupId]))/max(nDup))
-    y[dupId] = y[dupId] + eps*sequence(nDup)
-  }
+  # # Tackle duplicated data samples: slightly shift the samples by 'eps'
+  # dupId = duplicated(y)
+  # if (any(dupId)) {
+  #   nDup = diff(c(which(!dupId), n+1))
+  #   nDup = nDup[nDup > 1] - 1
+  #   eps  = max(1e-12, 0.1*min(diff(y[!dupId]))/max(nDup))
+  #   # y[dupId] = y[dupId] + eps*sequence(nDup)
+  #   # y[dupId] = y[dupId] + eps*runif(sum(nDup))
+  #   # y[dupId] = y[dupId] + eps*rnorm(sum(nDup))
+  #   aux = numeric(0)
+  #   for (i in 1:length(nDup))
+  #     aux = c(aux, seq(-eps,eps,length.out = nDup[i]))
+  #   y[dupId] = y[dupId] + aux
+  # }
 
   if (is.na(q)) q = msQuantile(n = n, alpha = alpha, verbose = verbose)
+  if (verbose) cat("Dynamic programming ...")
   bnd = .msBounds(y, q = q)
   ##### fast C++ implementation
-  if (verbose) cat("Dynamic programming ...")
   eh = .boundedHistogram(cumsum(y), bnd$start, bnd$bounds$ri-1, bnd$bounds$lower, bnd$bounds$upper)
   if (verbose) cat(" ... end!\n")
   
