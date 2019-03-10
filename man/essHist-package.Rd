@@ -16,15 +16,17 @@
 \tabular{ll}{
 Package: \tab essHist\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2018-01-30\cr
-License: \tab The GNU General Public License\cr
+Version: \tab 1.2.0\cr
+Date: \tab 2019-03-07\cr
+License: \tab GPL-3\cr
 }
 Index:
 \preformatted{
 essHistogram    Compute the essential histogram
-msQuantile      Simulate the quantile of multiscale statistics
 checkHistogram  Check any estimator by the multiscale confidence set
+
+genIntv         Generate the system of intervals
+msQuantile      Simulate the quantile of multiscale statistics
 
 dmixnorm        Compute density function of Gaussian mixtures
 pmixnorm        Compute distribution function of Gaussian mixtures

@@ -2,14 +2,15 @@
 \alias{checkHistogram}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Check any estimator by means of the multiscale confidence set
+Check any histogram estimator by means of the multiscale confidence set
 }
 \description{
 Give the locations (i.e. intervals) where the multiscale constraint is violated, and the change-points that are removable.
 }
 \usage{
-checkHistogram(h, y, alpha = 0.1, q = NA, plot = TRUE, verbose = TRUE,
-               xlim = range(y), ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
+checkHistogram(h, y, alpha = 0.1, q = NA, intv = genIntv(length(y)), 
+               plot = TRUE, verbose = TRUE, xlim = range(y), 
+               ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +25,15 @@ significance level; if \code{q} is missing, \code{q} is chosen as the (1-\code{a
 }
   \item{q}{
 threshold of the multiscale constraint.
+}
+\item{intv}{
+  a data frame provides the system of intervals on which the multiscale statistic is defined. The data frame constains the following two columns   
+  
+  \code{left} left index of an interval
+  
+  \code{right} right index of an interval
+  
+  By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see also Li et al. (2016).
 }
   \item{plot}{
 logical. If \code{TRUE}, the input estimator is potted, together with evaluation information. More precisely, at the very bottom, intervals where local constaints are violated are plotted. In the middle short vertical lines that indicate possibly removable change-points are drawn above a light blue horizontal line. Right below the light blue line, it plots a horizontal gray scale strap, the darkness of which reflects the number of violation intervals covering a given location, as a summary of violation information.
@@ -54,17 +64,20 @@ A data frame provides the intervals where the corresponding local side constrain
 \item{leftEnd}{left end point of an interval}
 \item{rightEnd}{right end point of an interval}
 }
+
 \references{
 Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.
 }
+
 \note{
-Only the intervals on which the input histogram is constant will be checked!
+The argument \code{intv} is internally adjusted via function \code{.validInterval} to ensure it is reasonable, and contains no empty intervals in case of tied observations. Only the intervals on which the input histogram is constant will be checked! 
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{msQuantile}}, \code{\link{essHistogram}}
+\code{\link{essHistogram}},
+\code{\link{genIntv}},
+\code{\link{msQuantile}}
 }
 \examples{
 set.seed(123)

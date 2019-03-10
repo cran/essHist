@@ -1,4 +1,4 @@
-\name{essHistogram}
+\name{Essential Histogram}
 \alias{essHistogram}
 \title{
 The Essential Histogram
@@ -7,8 +7,8 @@ The Essential Histogram
 Compute the essential histogram via (pruned) dynamic programming.
 }
 \usage{
-essHistogram(x, alpha = 0.5, q = NA, plot = TRUE, verbose = TRUE, 
-             xname = deparse(substitute(x)), ...)
+essHistogram(x, alpha = 0.5, q = NA, intv = genIntv(length(x)), plot = TRUE, 
+             verbose = TRUE, xname = deparse(substitute(x)), ...)
 }
 \arguments{
   \item{x}{
@@ -19,6 +19,15 @@ significance level; if \code{q} is missing, \code{q} is chosen as the (1-\code{a
 }
   \item{q}{
 threshold value.
+}
+\item{intv}{
+  a data frame provides the system of intervals on which the multiscale statistic is defined. The data frame constains the following two columns   
+  
+  \code{left} left index of an interval
+  
+  \code{right} right index of an interval
+  
+  By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see also Li et al. (2016).
 }
   \item{plot}{
 logical. If \code{TRUE} (default), a histogram is plotted, otherwise a list of breaks and counts is returned. In the latter case, a warning is used if (typically graphical) arguments are specified that only apply to the \code{plot = TRUE} case.
@@ -38,30 +47,40 @@ further arguments and \code{\link{graphical parameters}} passed to \code{\link{p
 }
 
 \details{
-The essential histogram is defined as the histogram with least blocks within the multiscale constraint. The one with highest likelihood is picked if there are more than one solutions. The essential histogram involves only one parameter \code{q}, the threshold of the multiscale constraint. Such a parameter can be chosen by means of the significance level \code{alpha}, which leads to nature statistical significance statements for the multiscale constraint. See Li et al. (2016) for further details.
+The essential histogram is defined as the histogram with least blocks within the multiscale constraint. The one with highest likelihood is picked if there are more than one solutions. The essential histogram involves only one parameter \code{q}, the threshold of the multiscale constraint. Such a parameter can be chosen by means of the significance level \code{alpha}, which leads to nature statistical significance statements for the multiscale constraint. The computational complexity is often linear in terms of sample size, although the worst complexity bound is quadratic up to a log-factor in case of the sparse interval system. See Li et al. (2016) for further details.
 }
 \references{
-Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.}
+Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.
+
+Rivera, C., & Walther, G. (2013). Optimal detection of a jump in the intensity of a {P}oisson process or in a density with likelihood ratio statistics. Scand. J. Stat. 40, 752--769.
+}
 % \author{
 %%  ~~who you are~~
 % }
-% \note{
-%%  ~~further notes~~
-% }
+\note{
+The argument \code{intv} is internally adjusted via function \code{.validInterval} to ensure it is reasonable, and contains no empty intervals in case of tied observations. The first block is a closed interval, and the rest blocks are left open right closed intervals. 
+}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{msQuantile}}, \code{\link{hist}}
+\code{\link{checkHistogram}},
+\code{\link{genIntv}}, 
+\code{\link{hist}}, 
+\code{\link{msQuantile}}
 }
+
 \examples{
 # simulate data
 set.seed(123)
 n = 300
-x = rnorm(n)
+x = sort(rnorm(n))
 
 # compute the essential histogram
 eh = essHistogram(x, xname = "Gauss")
+lines(x, dnorm(x), col='red')
+legend('topright',c('Essential Histogram', 'True Desity'), 
+       col=c('black','red'), lty = c(1,1))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

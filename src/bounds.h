@@ -82,8 +82,6 @@ private:
 
   double* const ub; // upper bound; has length Ni
 
-
-
   // currently computed bounds, always just for a certain right index
 
   int* nexti;   // next index to look at for each left index; has length N
@@ -103,8 +101,6 @@ private:
 
 
 public:
-
-
 
   // initialization
 

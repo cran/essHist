@@ -1,4 +1,4 @@
-checkHistogram <- function(h, y, alpha = 0.1, q = NA, plot = TRUE, verbose = TRUE, xlim = range(y), ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
+checkHistogram <- function(h, y, alpha = 0.1, q = NA, intv = genIntv(length(y)), plot = TRUE, verbose = TRUE, xlim = range(y), ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
 {  
   sy  = sort(y)
   if ("histogram" %in% class(h)) h = .hist2vec(h, sy)$h
@@ -7,9 +7,10 @@ checkHistogram <- function(h, y, alpha = 0.1, q = NA, plot = TRUE, verbose = TRU
   if (length(h) != n) 
     stop("length of data (", n, ") and length of estimator (", length(h),") does not match!")
   ris = c(which(diff(h) != 0), n)
-  lis = c(1, which(diff(h) != 0) + 1)
-  if (is.na(q)) q = msQuantile(n, alpha, verbose = verbose)
-  bnds = .msBounds(sy, q)$bounds
+  lis = c(1, which(diff(h) != 0)) # lis = c(1, which(diff(h) != 0) + 1)
+  intv = .validInterval(intv, sy)
+  if (is.na(q)) q = msQuantile(n, alpha, intv = intv, verbose = verbose)
+  bnds = .intv2Bounds(intv, sy, q)$bounds
 
   # check feasibility for each local constraint
   if (verbose) cat("Find violated intervals ...")
@@ -17,7 +18,7 @@ checkHistogram <- function(h, y, alpha = 0.1, q = NA, plot = TRUE, verbose = TRU
   indexIntv = rep(FALSE, nintv)
   for (i in 1:length(lis)) 
     indexIntv = indexIntv | ((bnds$li >= lis[i]) & (bnds$ri <= ris[i]))
-  indexIntv[indexIntv] = (h[bnds$li[indexIntv]] > bnds$upper[indexIntv]) | (h[bnds$li[indexIntv]] < bnds$lower[indexIntv])
+  indexIntv[indexIntv] = (h[bnds$ri[indexIntv]] > bnds$upper[indexIntv]) | (h[bnds$ri[indexIntv]] < bnds$lower[indexIntv])
   if (any(indexIntv)) 
     vioIntvs = data.frame(leftIndex  = bnds$li[indexIntv],
                           rightIndex = bnds$ri[indexIntv],
