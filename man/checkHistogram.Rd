@@ -5,26 +5,25 @@
 Check any histogram estimator by means of the multiscale confidence set
 }
 \description{
-Give the locations (i.e. intervals) where the multiscale constraint is violated, and the change-points that are removable.
+Provide the locations, i.e., intervals, where features are potentially missing (a.k.a. false negatives), and the break-points that are potentially redundant (a.k.a. false positives), by means of the multiscale confidence set. 
 }
 \usage{
-checkHistogram(h, y, alpha = 0.1, q = NA, intv = genIntv(length(y)), 
-               plot = TRUE, verbose = TRUE, xlim = range(y), 
+checkHistogram(h, x, alpha = 0.1, q = NULL, intv = NULL, plot = TRUE, xlim = NULL, 
                ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{h}{
-a numeric vector specifying values of a histogram at sample points or a \code{hitogram} class object (i.e. the return value of \code{\link{hist}}).
+a numeric vector specifying values of a histogram at sample points; or a \code{hitogram} class object (i.e. the return value of \code{\link{hist}}).
 }
-  \item{y}{
+  \item{x}{
 a numeric vector containing the data.
 }
   \item{alpha}{
-significance level; if \code{q} is missing, \code{q} is chosen as the (1-\code{alpha})-quantile of the null distribution of the multiscale statistic via Monte Carlo simulation, see also \code{\link{msQuantile}}.
+significance level, default as 0.1, see also \code{\link{essHistogram}}.
 }
   \item{q}{
-threshold of the multiscale constraint.
+threshold of the multiscale constraint; by default, \code{q} is chosen as the (1-\code{alpha})-quantile of the null distribution of the multiscale statistic via Monte Carlo simulation, see also \code{\link{msQuantile}}.
 }
 \item{intv}{
   a data frame provides the system of intervals on which the multiscale statistic is defined. The data frame constains the following two columns   
@@ -37,9 +36,6 @@ threshold of the multiscale constraint.
 }
   \item{plot}{
 logical. If \code{TRUE}, the input estimator is potted, together with evaluation information. More precisely, at the very bottom, intervals where local constaints are violated are plotted. In the middle short vertical lines that indicate possibly removable change-points are drawn above a light blue horizontal line. Right below the light blue line, it plots a horizontal gray scale strap, the darkness of which reflects the number of violation intervals covering a given location, as a summary of violation information.
-}
-\item{verbose}{
-logical. If \code{TRUE} (default) it prints some details about the computation; otherwise nothing is printed.   
 }
 \item{xlim, ylim}{
 numeric vectors of length 2 (default \code{xlim = range(y), ylim = NULL}): see \code{\link{plot}}.
@@ -58,19 +54,34 @@ further arguments and \code{\link{graphical parameters}} passed to \code{\link{p
 }
 }
 \value{
-A data frame provides the intervals where the corresponding local side constraint is violated; an empty data frame if there is no violation. The data frame constains the following four columns
-\item{leftIndex}{left index of an interval}
-\item{rightIndex}{right index of an interval}
-\item{leftEnd}{left end point of an interval}
-\item{rightEnd}{right end point of an interval}
+A list consists of one data frame, and one numeric vector: 
+
+\item{violatedIntervals}{A data frame provides the intervals where the corresponding local side constraint is violated; an empty data frame if there is no violation. It constains the following four columns
+
+\code{leftIndex} left index of an interval
+
+\code{rightIndex} right index of an interval
+
+\code{leftEnd} left end point of an interval
+
+\code{rightEnd} right end point of an interval
+
+An empty \code{data.frame} is returned if there is no violation. 
+}
+
+\item{removableBreakpoints}{A numeric vector contains all removable breakpoints, with zero length if there is no removable breakpoint. }
 }
 
 \references{
 Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.
 }
 
+\details{
+This function presents a visualization: the upper part plots the given histogram; in the middle part short vertical lines mark all removable break-points; in the lower part intervals of violation are shown, and a graybar below the middle horizontal line (blue) sumarizes such violations with the darkness scaling with the number of violation intervals covering a location. See Examples below and Li et al. (2016) for further details. 
+}
+
 \note{
-The argument \code{intv} is internally adjusted via function \code{.validInterval} to ensure it is reasonable, and contains no empty intervals in case of tied observations. Only the intervals on which the input histogram is constant will be checked! 
+The argument \code{intv} is internally adjusted ensure it contains no empty intervals in case of tied observations. Only the intervals on which the input histogram is constant will be checked! All the printing messages can be disabled by calling \code{\link{suppressMessages}}.
 }
 
 
@@ -81,20 +92,21 @@ The argument \code{intv} is internally adjusted via function \code{.validInterva
 }
 \examples{
 set.seed(123)
-# Data: mixture of Gaussians 1/3 N(0,0.5) + 1/3 N(5,1) + 1/3 N(15,2)
-n  = 500
-y  = rmixnorm(n, mean = c(0, 5, 15), sd = c(0.5, 1, 2))
+# Data: mixture of Gaussians "harp"
+n = 500
+y = rmixnorm(n, type = 'harp')
 
 # Oracle density
-sy = sort(y)
-ho = dmixnorm(sy, mean = c(0, 5, 15), sd = c(0.5, 1, 2))
+x = sort(y)
+ho = dmixnorm(x, type = 'harp')
 
 # R default histogram
 h  = hist(y, plot = FALSE)
 
 # Check R default histogram to local multiscale constriants
-b = checkHistogram(h, y)
-lines(sy, ho, col = "red")
+b = checkHistogram(h, y, ylim=c(-0.1,0.16))
+lines(x, ho, col = "red")
+rug(x, col = 'blue')
 legend("topright", c("R-Histogram", "Truth"), col = c("black", "red"), lty = c(1,1))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

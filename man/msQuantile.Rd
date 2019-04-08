@@ -7,25 +7,20 @@ Quantile of the multiscale statistics
 Simulate quantiles of the multiscale statistics under any continuous distribution function.
 }
 \usage{
-msQuantile(n, alpha = c(0.1), nsim = 5e3, is.sim = (n < 1e4), 
-           intv = genIntv(n), verbose = TRUE, ...)
+msQuantile(n, alpha = c(0.5), nsim = 5e3, is.sim = (n < 1e4), intv = NULL, ...)
 }
 \arguments{
   \item{n}{
   number of observations.
   }
-  
   \item{alpha}{
-  significance level; the (1-\code{alpha})-quantile of the null distribution of the multiscale statistic via Monte Carlo simulation.
+  significance level; default as 0.5, see also \code{\link{essHistogram}}. Like \code{\link{quantile}}, it can also be a vector. 
 }
   \item{nsim}{
-numer of Monte Carlo simulations.
+  numer of Monte Carlo simulations.
 } 
   \item{is.sim}{
-logical. If \code{TRUE} (default if \code{n} < 10,000) the quantile is determined via Monte Carlo simulations, which might take a long time; otherwise (default if \code{n} >= 10,000) it uses the quantile with \code{n} = 10,000, which has been precomputed and stored.
-}
-  \item{verbose}{
-logical. If \code{TRUE} (default) it prints some details about the computation; otherwise nothing is printed.   
+  logical. If \code{TRUE} (default if \code{n} < 10,000) the quantile is determined via Monte Carlo simulations, which might take a long time; otherwise (default if \code{n} >= 10,000) it uses the quantile with \code{n} = 10,000, which has been precomputed and stored.
 }
   \item{intv}{
   a data frame provides the system of intervals on which the multiscale statistic is defined. The data frame constains the following two columns   
@@ -37,14 +32,14 @@ logical. If \code{TRUE} (default) it prints some details about the computation; 
   By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see also Li et al. (2016).
 }
   \item{...}{
-further arguments passed to function \code{\link{quantile}}. 
+  further arguments passed to function \code{\link{quantile}}. 
 }
 }
 \details{
-  Empirically, it turns out that the (1-\code{alpha})-quantile of the multiscale statistic converges fast to that of the limit distribution as the number of observations \code{n} increases. Thus, for the sake of computational efficiency, the quantile with \code{n} = 10,000 are used by default for that with \code{n} > 10,000, which has already been precomputed and stored. Of course, for arbitrary sample size \code{n}, one can always simulate the quantile by setting  \code{is.sim = TRUE}, and use the precomputed value by setting \code{is.sim = FALSE}. For a given sample size \code{n}, simulations are once computed, and then automatically recorded in main memory for later usage. 
+  Empirically, it turns out that the quantile of the multiscale statistic converges fast to that of the limit distribution as the number of observations \code{n} increases. Thus, for the sake of computational efficiency, the quantile with \code{n} = 10,000 are used by default for that with \code{n} > 10,000, which has already been precomputed and stored. Of course, for arbitrary sample size \code{n}, one can always simulate the quantile by setting  \code{is.sim = TRUE}, and use the precomputed value by setting \code{is.sim = FALSE}. For a given sample size \code{n}, simulations are once computed, and then automatically recorded in the R memory for later usage. For memory efficiency, only the last simulation is stored.  
 }
 \value{
-A vector of length \code{length(alpha)} is returned, the same structure as returned by funtion \code{\link{quantile}}. See Li et al. (2016) for further details.
+  A vector of length \code{length(alpha)} is returned, the same structure as returned by funtion \code{\link{quantile}} with option \code{\link{names} = FALSE}; The values are the (1-\code{alpha})-quantile(s) of the null distribution of the multiscale statistic via Monte Carlo simulation, corresponding to (1-\code{alpha})-confidence level(s). See Li et al. (2016) for further details.
 }
 \references{
 Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. arXiv:1612.07216.
@@ -56,9 +51,9 @@ Rivera, C., & Walther, G. (2013). Optimal detection of a jump in the intensity o
 %\author{
 %%  ~~who you are~~
 %}
-%\note{
-%%  ~~further notes~~
-%}
+\note{
+All the printing messages can be disabled by calling \code{\link{suppressMessages}}.
+}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{

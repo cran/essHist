@@ -1,0 +1,23 @@
+2019-04-08 version 1.2.1
+  * split main.R into files essHistogram.R, msQuantile.R and intv.R
+  * inputs validation is enhanced for all functions
+  * improved manuals for all functions
+  * an improved implementation for discrete data
+  * add testing codes into package
+  * remove 'verbose' argument, as one can disable messages by calling suppressMessages()
+  * add a ChangeLog file
+  
+2019-03-10 version 1.2.0
+  * bugs on discrete data are fixed
+  * implement a natural way of dealing with discrete data with statistical guarantee 
+
+2018-04-09 version 1.1.1
+  * put the modification of tied observations to function smData   
+
+2018-03-23 version 1.1.0
+  * function msQuantile: add pre-stored values for large sample size
+  * function essHistogram: add perturbation to tied observations
+  * add message printing functionality for longer running codes
+
+2018-02-05 version 1.0.1
+  * first version on CRAN

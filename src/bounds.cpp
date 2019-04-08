@@ -4,7 +4,7 @@
 /***************
  * class LUBound
  * specifies lower and upper bound
- * Housen Li & Hannes Sieling, 2016 (based on stepR package)
+ * Housen Li & Hannes Sieling, 2016 (based on stepR package on CRAN)
  ***************/
 
 /*************
@@ -22,8 +22,8 @@ LUBound::LUBound() : lower(R_NegInf), upper(R_PosInf) {}
  * add more constraints
  ****************/
 void LUBound::add(double lb, double ub) {
-  lower = fmax(lower, lb);
-  upper = fmin(upper, ub);
+  lower = lower>lb ? lower : lb;
+  upper = upper<ub ? upper : ub;
 }
 void LUBound::add(LUBound b) {
   add(b.lower, b.upper);
@@ -49,12 +49,12 @@ bool LUBound::feasible() {
 Bounds::Bounds(IntegerVector xstart, IntegerVector xri, NumericVector xlb, NumericVector xub): N(xstart.size()), li(xstart.begin()), Ni(xri.size()), ri(xri.begin()), lb(xlb.begin()), ub(xub.begin()) {
   // ensure there are bounds
   if (Ni < 1) Rf_error("no bounds specified!");
-
+  
   // allocate arrays
   nexti = (int*) R_alloc(N, sizeof(int));
   cri   = (int*) R_alloc(N, sizeof(int));
   cb    = (LUBound*) R_alloc(N, sizeof(LUBound));
-
+  
   // initialize ci, cri and cb, and check whether bounds can be fulfilled; corresponds to k = 0
   for(unsigned int i = 0; i < N; i++) {
     // initialize bound to be infinite
@@ -80,7 +80,7 @@ Bounds::Bounds(IntegerVector xstart, IntegerVector xri, NumericVector xlb, Numer
     if(!cb[i].feasible()) Rf_error("Bounds not feasible at index %d!", i);
   }
   //************ Housen
-
+  
   // store initial state
   //      allocate arrays
   nexti0 = (int*) R_alloc(N, sizeof(int));
@@ -103,7 +103,8 @@ Bounds::Bounds(IntegerVector xstart, IntegerVector xri, NumericVector xlb, Numer
  ****************/
 LUBound Bounds::current(unsigned int l, unsigned int r) {
   // check whether these indices may be asked for
-  if (r >= N  || r <= l) Rprintf("indices must fulfill l %d < r %d < N %d", l, r, N);
+  if (r >= N  || r <= l) 
+    Rprintf("indices must fulfill l %d < r %d < N %d", l, r, N);
   //    if ((int) r < cri[l]) error("for l %d we are already at cri %d, i.e. beyond r %d", l, cri[l], r);
   //    if ((int) r > cri[l] + 1) error("for l %d we are at cri %d, i.e. r %d is too far", l, cri[l], r);
   // check whether we have already computed this one
@@ -143,4 +144,4 @@ void Bounds::reset() {
     cb[i].lower = cb0[i].lower;
     cb[i].upper = cb0[i].upper;
   }
-  }
+}

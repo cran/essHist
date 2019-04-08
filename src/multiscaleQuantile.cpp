@@ -11,24 +11,26 @@ double penLR(double x, int len, double pen, int n) {
 }
 
 // [[Rcpp::export(".msQuantile")]]
-NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsim, bool verbose) {
+NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsim) {
     // output
     NumericVector stat(nsim);
-    
     int nintv = left.size(); // number of intervals
+    // // record the last simulation
+    // static List last_simulation;  // a list of entries: n, nsim, stat
     
-    // record the last simulation
-    static List last_simulation;  // a list of entries: n, nsim, stat
     
-    if (last_simulation.size() > 0 && n == (int)last_simulation[0] && nsim == (int)last_simulation[1] && nintv == (int)last_simulation[2]) {
-        
-        // Rprintf("Use the previous simulation!\n");
-        
-        stat = last_simulation[3];
-    } else {
-        if (verbose)
-            Rprintf("Quantile simulation (only for the first time) might take a while ... ");
-        
+    // Rprintf("n = %d\n", n);
+    // Rprintf("nsim = %d\n", nsim);
+    // Rprintf("nintv = %d\n", nintv);
+    
+    // if (last_simulation.size() > 0 && n == (int)last_simulation[0] && nsim == (int)last_simulation[1] && nintv == (int)last_simulation[2]) {
+    //     if (verbose) {
+    //       Rprintf("Quantile is retrieved form the previous simulation!\n");
+    //     }
+    //     stat = last_simulation[3];
+    // } else {
+    //     if (verbose)
+    //         Rprintf("Quantile simulation (only for the first time) might take a while ... ");
         // pre-store the penality for computational speedup, at expense of memory 
         double aux;
         NumericVector Pen(nintv);
@@ -36,11 +38,9 @@ NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsi
           aux = (right[i]-left[i])/double(n);
           Pen[i] = sqrt(2*(1-log(aux*(1-aux))));
         }
-        
         // Monte-Carlo simulation
         NumericVector U(n);
         double pLR;
-        
         GetRNGstate();
         for (int i = 0; i < nsim; ++i) {
             U = runif(n, 0, 1);
@@ -49,17 +49,16 @@ NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsi
             for (int j = 0; j < nintv; ++j) {
                 pLR = penLR(U[right[j]]-U[left[j]], right[j]-left[j], Pen[j], n);
                 if (!ISNA(pLR)) {
-                  stat[i] = stat[i]>pLR?stat[i]:pLR;// stat[i] = std::fmax(stat[i], pLR);
+                  stat[i] = stat[i]>pLR ? stat[i] : pLR;// stat[i] = std::fmax(stat[i], pLR);
                 }
             }
         }
         PutRNGstate();
-        // store simulated results
-        last_simulation = List::create(n, nsim, nintv, stat);
-        if (verbose)
-            Rprintf("... end!\n");
-    }
-    
+        // // store simulated results
+        // last_simulation = List::create(n, nsim, nintv, stat);
+        // if (verbose)
+        //     Rprintf("... end!\n");
+    // }
     return stat;
 }
 

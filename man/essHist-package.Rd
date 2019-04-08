@@ -16,8 +16,8 @@
 \tabular{ll}{
 Package: \tab essHist\cr
 Type: \tab Package\cr
-Version: \tab 1.2.0\cr
-Date: \tab 2019-03-07\cr
+Version: \tab 1.2.1\cr
+Date: \tab 2019-04-08\cr
 License: \tab GPL-3\cr
 }
 Index:
@@ -50,40 +50,42 @@ Li, H., Munk, A., Sieling, H., and Walther, G. (2016). The essential histogram. 
 \examples{
 # Simulate data
 set.seed(123)
-n = 300
-y = rnorm(n)
+type = 'skewed_unimodal'
+n = 500
+y = rmixnorm(n, type = type)
 
 # Compute the essential histogram
 eh = essHistogram(y, plot = FALSE)
 
 # Plot results
 #     compute oracle density
-x  = seq(min(y), max(y), length.out = n)
-od = dnorm(x)
+x  = sort(y)
+od = dmixnorm(x, type = type)
 #     compare with orcle density
-plot(x, od, type = "l", xlab = NA, ylab = NA, col = "red")
+plot(x, od, type = "l", xlab = NA, ylab = NA, col = "red", main = type)
 lines(eh)
-legend("topright", c("Oracle density", "Essential histogram"), 
+legend("topleft", c("Oracle density", "Essential histogram"), 
        lty = c(1,1), col = c("red", "black"))
 
-###########################################################
 
-# Evaluate other method e.g. R default histogram function
-# Data: mixture of Gaussians 1/3 N(0,0.5) + 1/3 N(5,1) + 1/3 N(15,2)
+
+##### Evaluate other method
 set.seed(123)
-n = 300
-y = rmixnorm(n, mean = c(0, 5, 15), sd = c(0.5, 1, 2))
+# Data: mixture of Gaussians "harp"
+n = 500
+y = rmixnorm(n, type = 'harp')
 
 # Oracle density
-sy = sort(y)
-ho = dmixnorm(sy, mean = c(0, 5, 15), sd = c(0.5, 1, 2))
+x = sort(y)
+ho = dmixnorm(x, type = 'harp')
 
 # R default histogram
 h  = hist(y, plot = FALSE)
 
-# Check R default histogram to local multiscale constriants
-b = checkHistogram(h, y)
-lines(sy, ho, col = "red")
+# Check R default histogram to local multiscale constraints
+b = checkHistogram(h, y, ylim=c(-0.1,0.16))
+lines(x, ho, col = "red")
+rug(x, col = 'blue')
 legend("topright", c("R-Histogram", "Truth"), col = c("black", "red"), lty = c(1,1))
 }
 

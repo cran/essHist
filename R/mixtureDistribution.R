@@ -2,58 +2,122 @@
 ##########  Mixture of Gaussians  #########################
 ###########################################################
 # random number generator
-rmixnorm <- function(n, mean, sd, prob = rep(1/length(mean),length(mean)), type = NULL) {
+rmixnorm <- function(n, mean = c(0), sd = rep(1,length(mean)), 
+                     prob = rep(1,length(mean)), type = NULL) {
+  if (!(length(n) == 1 && is.finite(n) && n == round(n) && n > 0))
+    stop("Invalid input 'n'!")
   if (is.null(type)) {
-    nc = length(mean)
+    if (!is.numeric(mean))
+      stop("'mean' must be numeric!")
+    mean = mean[is.finite(mean)]
+    nc   = length(mean)
+    if (nc == 0)
+      stop("Input 'mean' must be finite!")
+    if (!is.numeric(sd))
+      stop("'sd' must be numeric!")
+    sd = sd[is.finite(sd)]
+    if (any(sd < 0) || length(sd) == 0)
+      stop("'sd' must be positive and finite!")
+    if (!is.numeric(prob))
+      stop("'prob' must be numeric!")
+    prob = prob[is.finite(prob) & prob >= 0]
+    if (length(prob) == 0 || sum(prob) == 0)
+      stop("'prob' must be positive!")
+    prob = prob/sum(prob)
     if (nc != length(sd) || length(prob) != nc) 
-      stop("Input 'mean', 'sd', and 'prob' should have the same length!")
-    beta = sample(1:nc, size = n, replace = TRUE, prob = prob)
-    ret  = rnorm(n, mean = mean[beta], sd = sd[beta])
-  } else {
-    param = paramExample(type)
-    mean    = param$mean
-    sd = param$sd
-    prob  = param$prob
-    ret   = rmixnorm(n, mean = mean, sd = sd, prob = prob)
-  }
-  ret
-}
-# density function
-dmixnorm <- function(x, mean, sd, prob = rep(1/length(mean),length(mean)), type = NULL, ...) {
-  if (is.null(type)) {
-    nc = length(mean)
-    if (nc != length(sd) || length(prob) != nc) 
-      stop("Input 'mean', 'sd', and 'prob' should have the same length!")
-    n   = length(x)
-    ret = rep(0, n)
-    for (i in 1:nc) 
-      ret = ret + prob[i]*dnorm(x, mean = mean[i], sd = sd[i], ...)
+      stop("Input 'mean', 'sd', and 'prob' must have the same length!")
   } else {
     param = paramExample(type)
     mean  = param$mean
     sd    = param$sd
     prob  = param$prob
-    ret   = dmixnorm(x, mean = mean, sd = sd, prob = prob, ...)
+    nc    = length(mean)
+    # ret   = rmixnorm(n, mean = mean, sd = sd, prob = prob)
   }
+  beta = sample(1:nc, size = n, replace = TRUE, prob = prob)
+  rnorm(n, mean = mean[beta], sd = sd[beta])
+}
+# density function
+dmixnorm <- function(x, mean = c(0), sd = rep(1,length(mean)), 
+                     prob = rep(1,length(mean)), type = NULL, ...) {
+  if (!is.numeric(x))
+    stop("'x' must be numeric!")
+  x = x[is.finite(x)]
+  if (length(x) == 0)
+    stop("Invalid length(x)!")
+  if (is.null(type)) {
+    if (!is.numeric(mean))
+      stop("'mean' must be numeric!")
+    mean = mean[is.finite(mean)]
+    nc   = length(mean)
+    if (nc == 0)
+      stop("Input 'mean' must be finite!")
+    if (!is.numeric(sd))
+      stop("'sd' must be numeric!")
+    sd = sd[is.finite(sd)]
+    if (any(sd < 0) || length(sd) == 0)
+      stop("'sd' must be positive and finite!")
+    if (!is.numeric(prob))
+      stop("'prob' must be numeric!")
+    prob = prob[is.finite(prob) & prob >= 0]
+    if (length(prob) == 0 || sum(prob) == 0)
+      stop("'prob' must be positive!")
+    prob = prob/sum(prob)
+    if (nc != length(sd) || length(prob) != nc) 
+      stop("Input 'mean', 'sd', and 'prob' must have the same length!")
+  } else {
+    param = paramExample(type)
+    mean  = param$mean
+    sd    = param$sd
+    prob  = param$prob
+    nc    = length(mean)
+    # ret   = dmixnorm(x, mean = mean, sd = sd, prob = prob, ...)
+  }
+  n   = length(x)
+  ret = rep(0, n)
+  for (i in 1:nc) 
+    ret = ret + prob[i]*dnorm(x, mean = mean[i], sd = sd[i], ...)
   ret
 }
 # distribution function
-pmixnorm <- function(x, mean, sd, prob = rep(1/length(mean),length(mean)), type = NULL, ...) {
+pmixnorm <- function(x, mean = c(0), sd = rep(1,length(mean)), 
+                     prob = rep(1,length(mean)), type = NULL, ...) {
+  if (!is.numeric(x))
+    stop("'x' must be numeric!")
+  x = x[is.finite(x)]
+  if (length(x) == 0)
+    stop("Invalid length(x)!")
   if (is.null(type)) {
-    nc = length(mean)
+    if (!is.numeric(mean))
+      stop("'mean' must be numeric!")
+    mean = mean[is.finite(mean)]
+    nc   = length(mean)
+    if (nc == 0)
+      stop("Input 'mean' must be finite!")
+    if (!is.numeric(sd))
+      stop("'sd' must be numeric!")
+    sd = sd[is.finite(sd)]
+    if (any(sd < 0) || length(sd) == 0)
+      stop("'sd' must be positive and finite!")
+    if (!is.numeric(prob))
+      stop("'prob' must be numeric!")
+    prob = prob[is.finite(prob) & prob >= 0]
+    if (length(prob) == 0 || sum(prob) == 0)
+      stop("'prob' must be positive!")
+    prob = prob/sum(prob)
     if (nc != length(sd) || length(prob) != nc) 
-      stop("Input 'mean', 'sd', and 'prob' should have the same length!")
-    n   = length(x)
-    ret = rep(0, n)
-    for (i in 1:nc) 
-      ret = ret + prob[i]*pnorm(x, mean = mean[i], sd = sd[i], ...)
+      stop("Input 'mean', 'sd', and 'prob' must have the same length!")
   } else {
     param = paramExample(type)
     mean  = param$mean
     sd    = param$sd
     prob  = param$prob
-    ret   = pmixnorm(x, mean = mean, sd = sd, prob = prob, ...)
+    nc    = length(mean)
+    # ret   = pmixnorm(x, mean = mean, sd = sd, prob = prob, ...)
   }
+  ret = rep(0, length(x))
+  for (i in 1:nc) 
+    ret = ret + prob[i]*pnorm(x, mean = mean[i], sd = sd[i], ...)
   ret
 }
 # parameters for some examples: (Marron & Wand '92), harp

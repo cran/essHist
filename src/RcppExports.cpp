@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // msQuantile
-NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsim, bool verbose);
-RcppExport SEXP _essHist_msQuantile(SEXP leftSEXP, SEXP rightSEXP, SEXP nSEXP, SEXP nsimSEXP, SEXP verboseSEXP) {
+NumericVector msQuantile(IntegerVector left, IntegerVector right, int n, int nsim);
+RcppExport SEXP _essHist_msQuantile(SEXP leftSEXP, SEXP rightSEXP, SEXP nSEXP, SEXP nsimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,30 +15,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type right(rightSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type nsim(nsimSEXP);
-    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(msQuantile(left, right, n, nsim, verbose));
+    rcpp_result_gen = Rcpp::wrap(msQuantile(left, right, n, nsim));
     return rcpp_result_gen;
 END_RCPP
 }
 // boundedHistogram
-DataFrame boundedHistogram(NumericVector orderedData, IntegerVector start, IntegerVector rightIndex, NumericVector lower, NumericVector upper);
-RcppExport SEXP _essHist_boundedHistogram(SEXP orderedDataSEXP, SEXP startSEXP, SEXP rightIndexSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+DataFrame boundedHistogram(NumericVector orderedData, NumericVector cumCount, IntegerVector start, IntegerVector rightIndex, NumericVector lower, NumericVector upper);
+RcppExport SEXP _essHist_boundedHistogram(SEXP orderedDataSEXP, SEXP cumCountSEXP, SEXP startSEXP, SEXP rightIndexSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type orderedData(orderedDataSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cumCount(cumCountSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type start(startSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type rightIndex(rightIndexSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(boundedHistogram(orderedData, start, rightIndex, lower, upper));
+    rcpp_result_gen = Rcpp::wrap(boundedHistogram(orderedData, cumCount, start, rightIndex, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_essHist_msQuantile", (DL_FUNC) &_essHist_msQuantile, 5},
-    {"_essHist_boundedHistogram", (DL_FUNC) &_essHist_boundedHistogram, 5},
+    {"_essHist_msQuantile", (DL_FUNC) &_essHist_msQuantile, 4},
+    {"_essHist_boundedHistogram", (DL_FUNC) &_essHist_boundedHistogram, 6},
     {NULL, NULL, 0}
 };
 

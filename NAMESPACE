@@ -4,7 +4,7 @@ exportPattern("^[^\\.]")
 importFrom(Rcpp, evalCpp)
 useDynLib(essHist)
 
-importFrom("graphics", "lines", "plot", "rect", "abline", "axis", "mtext", "par", "segments", "hist")
+importFrom("graphics", "lines", "plot", "rect", "abline", "axis", "mtext", "par", "segments", "hist", "rug")
 importFrom("stats", "na.omit", "quantile", "runif", "rnorm", "pnorm", "dnorm", "var")
 importFrom("grDevices", "rgb")
 importFrom("utils", "tail")
