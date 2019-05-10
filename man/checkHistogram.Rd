@@ -8,8 +8,10 @@ Check any histogram estimator by means of the multiscale confidence set
 Provide the locations, i.e., intervals, where features are potentially missing (a.k.a. false negatives), and the break-points that are potentially redundant (a.k.a. false positives), by means of the multiscale confidence set. 
 }
 \usage{
-checkHistogram(h, x, alpha = 0.1, q = NULL, intv = NULL, plot = TRUE, xlim = NULL, 
-               ylim = NULL, xlab = "", ylab = "", yaxt = "n", ...)
+checkHistogram(h, x, alpha = 0.1, q = NULL, intv = NULL, 
+                mode = ifelse(anyDuplicated(x),"Gen","Con"), 
+                plot = TRUE, xlim = NULL, ylim = NULL, 
+                xlab = "", ylab = "", yaxt = "n", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,6 +36,13 @@ threshold of the multiscale constraint; by default, \code{q} is chosen as the (1
   
   By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see also Li et al. (2016).
 }
+\item{mode}{
+  \code{"Con"} for continuous distribution functions
+  
+  \code{"Gen"} for general (possibly with discontinuous) distribution functions
+  
+  By default, \code{"Con"} is chosen if there is no tied observations; otherwise, \code{"Gen"} is chosen; see Li et al. (2016) for further details.
+  }
   \item{plot}{
 logical. If \code{TRUE}, the input estimator is potted, together with evaluation information. More precisely, at the very bottom, intervals where local constaints are violated are plotted. In the middle short vertical lines that indicate possibly removable change-points are drawn above a light blue horizontal line. Right below the light blue line, it plots a horizontal gray scale strap, the darkness of which reflects the number of violation intervals covering a given location, as a summary of violation information.
 }

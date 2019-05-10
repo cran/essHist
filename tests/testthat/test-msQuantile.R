@@ -26,5 +26,7 @@ test_that("the validity of msQuantile", {
     theta = unique(intv$right - intv$left + (intv$left == 1))/n
     max(-sqrt(2 - 2*log (theta*(1-theta))))
   } 
-  expect_true(msQuantile(n) >= minThd(n, genIntv(n)))
+  expect_less_than(minThd(n, genIntv(n)), msQuantile(n))
+  
+  expect_less_than(msQuantile(n, mode="Con"), msQuantile(n, mode="Gen"))
 })

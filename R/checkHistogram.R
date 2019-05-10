@@ -1,4 +1,5 @@
 checkHistogram <- function(h, x, alpha = 0.1, q = NULL, intv = NULL, 
+                           mode = ifelse(anyDuplicated(x),"Gen","Con"),
                            plot = TRUE, xlim = NULL, ylim = NULL, 
                            xlab = "", ylab = "", yaxt = "n", ...) { 
   if (!is.numeric(x)) 
@@ -19,9 +20,15 @@ checkHistogram <- function(h, x, alpha = 0.1, q = NULL, intv = NULL,
   lis = c(1, which(diff(h) != 0)) # lis = c(1, which(diff(h) != 0) + 1)
   if (is.null(intv))
     intv = genIntv(n)
-  intv = .validInterval(intv, sy)
+  if (!('left' %in% names(intv) && 'right' %in% names(intv)))
+    stop("'intv' must have two fields 'left' and 'right'!")
+  intv = intv[(intv$left<intv$right)&(intv$left>=1)&(intv$right<=n),]
+  if (nrow(intv) < 1) 
+    stop("No valid intervals in 'intv'!")
   if (is.null(q)) 
-    q = msQuantile(n, alpha, intv = intv)
+    q = msQuantile(n, alpha, intv = intv, mode = mode)
+  else if (!missing(alpha) || !missing(mode) || !missing(intv))
+    warning("Use input 'q' and ignore 'alpha', 'intv' or 'mode'!")
   else if (!missing(alpha))
     warning("Use input 'q' and ignore 'alpha'!")
   if (length(q) > 1) {
@@ -34,6 +41,7 @@ checkHistogram <- function(h, x, alpha = 0.1, q = NULL, intv = NULL,
   if (q < minQ)
     stop(sprintf("Empty constraint set: threshold 'q' should be >= %g!", minQ))
   # parse discrete data
+  intv = .validInterval(intv, sy)
   bnds = .intv2Bounds(intv, sy, c(0,2:n), q)$bounds
 
   # check feasibility for each local constraint

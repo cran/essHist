@@ -1,5 +1,7 @@
 # Compute the essential histogram
-essHistogram <- function(x, alpha = 0.5, q = NULL, intv = NULL, plot = TRUE, xname = deparse(substitute(x)), ...) { 
+essHistogram <- function(x, alpha = 0.5, q = NULL, intv = NULL, 
+                         plot = TRUE, mode = ifelse(anyDuplicated(x),"Gen","Con"), 
+                         xname = deparse(substitute(x)), ...) { 
   if (!is.numeric(x)) 
     stop("'x' must be numeric")
   y = sort(x[is.finite(x)])
@@ -14,13 +16,13 @@ essHistogram <- function(x, alpha = 0.5, q = NULL, intv = NULL, plot = TRUE, xna
     intv = genIntv(n)
   if (!('left' %in% names(intv) && 'right' %in% names(intv)))
     stop("'intv' must have two fields 'left' and 'right'!")
-  intv = .validInterval(intv, y)
+  intv = intv[(intv$left<intv$right)&(intv$left>=1)&(intv$right<=n),]
   if (nrow(intv) < 1) 
     stop("No valid intervals in 'intv'!")
   if (is.null(q)) 
-    q = msQuantile(n, alpha, intv = intv)
-  else if (!missing(alpha))
-    warning("Use input 'q' and ignore 'alpha'!")
+    q = msQuantile(n, alpha, intv = intv, mode = mode)
+  else if (!missing(alpha) || !missing(mode) || !missing(intv))
+    warning("Use input 'q' and ignore 'alpha', 'intv' or 'mode'!")
   if (length(q) > 1) {
     q = q[1]
     warning("Length of 'q' or 'alpha' > 1: use only the first value, and ignore the others!") 
@@ -33,6 +35,7 @@ essHistogram <- function(x, alpha = 0.5, q = NULL, intv = NULL, plot = TRUE, xna
   message(sprintf('The threshold is %g', q))
   message("Dynamic programming ...", appendLF=FALSE) 
   # parse discrete data
+  intv   = .validInterval(intv, y)
   cumcnt = c(0,which(diff(y)!=0),n) # cumulative counts
   y      = unique(y)                # unique data values
   # y      = c(2*y[1]-y[2], y)

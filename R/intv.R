@@ -93,6 +93,8 @@ genIntv <- function (n, type = c('Sparse', 'Full')) {
       left  = c(left[ind.valid],leMd)
       right = c(right[ind.valid],riMd)
     }
+    # left  = left[ind.valid]
+    # right = right[right.valid]
   }
   # remove repetitive intervals
   unique(data.frame('left'=left, 'right'=right))

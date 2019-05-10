@@ -1,3 +1,7 @@
+2019-05-10 version 1.2.2
+  * a modifcation for dealing with discrete data (functions checkHistogram, msQuantile, essHistogram have been modified)
+  * a tiny modification in msQuantile function, to speed it up
+  
 2019-04-08 version 1.2.1
   * split main.R into files essHistogram.R, msQuantile.R and intv.R
   * inputs validation is enhanced for all functions

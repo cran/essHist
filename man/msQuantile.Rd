@@ -7,7 +7,8 @@ Quantile of the multiscale statistics
 Simulate quantiles of the multiscale statistics under any continuous distribution function.
 }
 \usage{
-msQuantile(n, alpha = c(0.5), nsim = 5e3, is.sim = (n < 1e4), intv = NULL, ...)
+msQuantile(n, alpha = c(0.5), nsim = 5e3, is.sim = (n < 1e4), 
+            intv = genIntv(n), mode = c("Con", "Gen"), ...)
 }
 \arguments{
   \item{n}{
@@ -29,7 +30,14 @@ msQuantile(n, alpha = c(0.5), nsim = 5e3, is.sim = (n < 1e4), intv = NULL, ...)
   
   \code{right} right index of an interval
   
-  By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see also Li et al. (2016).
+  By default, it is set to the sparse interval system proposed by Rivera and Walther (2013), see \code{\link{genIntv}} and also Li et al. (2016).
+}
+  \item{mode}{
+  \code{"Con"} for continuous distribution functions (default)
+  
+  \code{"Gen"} for general (possibly with discontinuous) distribution functions
+  
+  See Li et al. (2016) for further details.
 }
   \item{...}{
   further arguments passed to function \code{\link{quantile}}. 

@@ -8,7 +8,8 @@ Compute the essential histogram via (pruned) dynamic programming.
 }
 \usage{
 essHistogram(x, alpha = 0.5, q = NULL, intv = NULL, plot = TRUE, 
-             xname = deparse(substitute(x)), ...)
+              mode = ifelse(anyDuplicated(x),"Gen","Con"), 
+              xname = deparse(substitute(x)), ...)
 }
 \arguments{
   \item{x}{
@@ -32,6 +33,13 @@ a numeric vector containing the data.
   \item{plot}{
   logical. If \code{TRUE} (default), a histogram is plotted, otherwise a list of breaks and counts is returned. In the latter case, a warning is used if (typically graphical) arguments are specified that only apply to the \code{plot = TRUE} case.
 }
+  \item{mode}{
+  \code{"Con"} for continuous distribution functions
+  
+  \code{"Gen"} for general (possibly with discontinuous) distribution functions
+  
+  By default, \code{"Con"} is chosen if there is no tied observations; otherwise, \code{"Gen"} is chosen; see Li et al. (2016) for further details.
+  }
   \item{xname}{
   a character string with the actual \code{x} argument name.
 }
